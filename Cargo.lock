@@ -5028,7 +5028,7 @@ dependencies = [
  "libp2p-ping",
  "libp2p-quic",
  "libp2p-request-response",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "libp2p-tcp",
  "libp2p-upnp",
  "libp2p-yamux",
@@ -5046,7 +5046,7 @@ checksum = "38944b7cb981cc93f2f0fb411ff82d0e983bd226fbcc8d559639a3a73236568b"
 dependencies = [
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
 ]
 
 [[package]]
@@ -5057,7 +5057,7 @@ checksum = "efe9323175a17caa8a2ed4feaf8a548eeef5e0b72d03840a0eab4bcb0210ce1c"
 dependencies = [
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
 ]
 
 [[package]]
@@ -5146,7 +5146,7 @@ dependencies = [
  "hex_fmt",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "prometheus-client",
  "quick-protobuf",
  "quick-protobuf-codec",
@@ -5171,7 +5171,7 @@ dependencies = [
  "futures-timer",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "quick-protobuf",
  "quick-protobuf-codec",
  "smallvec",
@@ -5217,7 +5217,7 @@ dependencies = [
  "futures-timer",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "quick-protobuf",
  "quick-protobuf-codec",
  "rand 0.8.5",
@@ -5233,14 +5233,15 @@ dependencies = [
 [[package]]
 name = "libp2p-mdns"
 version = "0.47.0"
-source = "git+https://github.com/informalsystems/rust-libp2p.git?branch=reth#198d930795f1b27dc98a4e5da59d59ff12c4701c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11d0ba095e1175d797540e16b62e7576846b883cb5046d4159086837b36846cc"
 dependencies = [
  "futures",
  "hickory-proto",
  "if-watch",
- "libp2p-core 0.43.0 (git+https://github.com/informalsystems/rust-libp2p.git?branch=reth)",
+ "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (git+https://github.com/informalsystems/rust-libp2p.git?branch=reth)",
+ "libp2p-swarm",
  "rand 0.8.5",
  "smallvec",
  "socket2",
@@ -5261,7 +5262,7 @@ dependencies = [
  "libp2p-identity",
  "libp2p-kad",
  "libp2p-ping",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "pin-project",
  "prometheus-client",
  "web-time",
@@ -5301,7 +5302,7 @@ dependencies = [
  "futures-timer",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "rand 0.8.5",
  "tracing",
  "web-time",
@@ -5341,7 +5342,7 @@ dependencies = [
  "futures-bounded",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libp2p-identity",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "rand 0.8.5",
  "serde",
  "smallvec",
@@ -5382,26 +5383,6 @@ dependencies = [
  "rand 0.8.5",
  "smallvec",
  "tokio",
- "tracing",
- "web-time",
-]
-
-[[package]]
-name = "libp2p-swarm"
-version = "0.46.0"
-source = "git+https://github.com/informalsystems/rust-libp2p.git?branch=reth#198d930795f1b27dc98a4e5da59d59ff12c4701c"
-dependencies = [
- "either",
- "fnv",
- "futures",
- "futures-timer",
- "libp2p-core 0.43.0 (git+https://github.com/informalsystems/rust-libp2p.git?branch=reth)",
- "libp2p-identity",
- "lru 0.12.5",
- "multistream-select 0.13.0 (git+https://github.com/informalsystems/rust-libp2p.git?branch=reth)",
- "once_cell",
- "rand 0.8.5",
- "smallvec",
  "tracing",
  "web-time",
 ]
@@ -5463,7 +5444,7 @@ dependencies = [
  "futures-timer",
  "igd-next",
  "libp2p-core 0.43.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "libp2p-swarm 0.46.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libp2p-swarm",
  "tokio",
  "tracing",
 ]

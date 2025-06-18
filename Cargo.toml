@@ -50,11 +50,6 @@ alloy-consensus = "1.0.9"
 # Malachite dependencies
 malachitebft-core-types = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-core-types" }
 malachitebft-app-channel = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-app-channel" }
-malachitebft-proto = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-proto" }
-malachitebft-app = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-app" }
-malachitebft-engine = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-engine" }
-malachitebft-config = { git = "https://github.com/informalsystems/malachite", branch = "no-dns", package = "informalsystems-malachitebft-config" }
 
 [patch.crates-io]
 libp2p-dns = { git = "https://github.com/informalsystems/rust-libp2p.git", branch = "reth" }
-libp2p-mdns = { git = "https://github.com/informalsystems/rust-libp2p.git", branch = "reth" }
