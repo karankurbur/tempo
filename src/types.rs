@@ -1,6 +1,8 @@
+use alloy_primitives::B256;
 use bytes::Bytes;
 use malachitebft_core_types::Round;
 use malachitebft_signing_ed25519::Signature;
+use reth_primitives::Block;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -43,67 +45,87 @@ impl fmt::Debug for Address {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Serialize, Deserialize)]
-pub struct ValueId(u64);
+pub struct ValueId(B256);
 
 impl ValueId {
-    pub const fn new(id: u64) -> Self {
-        Self(id)
+    pub const fn new(hash: B256) -> Self {
+        Self(hash)
     }
 
-    pub const fn as_u64(&self) -> u64 {
-        self.0
+    pub const fn as_b256(&self) -> &B256 {
+        &self.0
+    }
+
+    // Keep as_u64 for compatibility during migration
+    pub fn as_u64(&self) -> u64 {
+        // Take the first 8 bytes of the hash as u64
+        u64::from_be_bytes(self.0[..8].try_into().unwrap())
+    }
+}
+
+impl From<B256> for ValueId {
+    fn from(hash: B256) -> Self {
+        Self::new(hash)
     }
 }
 
 impl From<u64> for ValueId {
     fn from(value: u64) -> Self {
-        Self::new(value)
+        // For backwards compatibility, create a B256 from u64
+        let mut bytes = [0u8; 32];
+        bytes[..8].copy_from_slice(&value.to_be_bytes());
+        Self::new(B256::from(bytes))
     }
 }
 
 impl fmt::Display for ValueId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:x}", self.0)
+        write!(f, "{}", self.0)
     }
 }
 
 /// The value to decide on
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Value {
-    pub value: u64,
-    pub extensions: Bytes,
+    pub block: Block,
 }
 
 impl Value {
-    /// Creates a new Value by hashing the provided bytes using SipHash
-    pub fn new(data: Bytes) -> Self {
-        use std::{
-            collections::hash_map::DefaultHasher,
-            hash::{Hash, Hasher},
-        };
-
-        let mut hasher = DefaultHasher::new(); // Uses SipHash
-        data.hash(&mut hasher);
-
-        Self {
-            value: hasher.finish(), // Get the u64 hash
-            extensions: data,       // Store original bytes as extensions
-        }
+    /// Creates a new Value from a Block
+    pub fn new(block: Block) -> Self {
+        Self { block }
     }
 
     pub fn id(&self) -> ValueId {
-        ValueId(self.value)
+        ValueId::from(self.block.header.hash_slow())
     }
 
     pub fn size_bytes(&self) -> usize {
-        std::mem::size_of_val(&self.value) + self.extensions.len()
+        // Estimate size: header + body + rlp overhead
+        // This is an approximation
+        bincode::serialized_size(&self.block).unwrap_or(0) as usize
     }
 }
 
 impl std::hash::Hash for Value {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.value.hash(state);
-        self.extensions.hash(state);
+        self.block.header.hash_slow().hash(state);
+    }
+}
+
+// Manual Ord implementation based on block hash
+impl PartialOrd for Value {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Value {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.block
+            .header
+            .hash_slow()
+            .cmp(&other.block.header.hash_slow())
     }
 }
 
