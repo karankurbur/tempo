@@ -92,11 +92,11 @@ impl Node for MalachiteNode {
         // Convert NodeConfig to Config for compatibility
         Ok(Config {
             moniker: self.config.node.moniker.clone(),
-            logging: self.config.node.logging.clone(),
+            logging: self.config.node.logging,
             consensus: self.config.node.consensus.clone(),
-            value_sync: self.config.node.value_sync.clone(),
+            value_sync: self.config.node.value_sync,
             metrics: self.config.node.metrics.clone(),
-            runtime: self.config.node.runtime.clone(),
+            runtime: self.config.node.runtime,
         })
     }
 

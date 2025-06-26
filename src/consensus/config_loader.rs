@@ -33,11 +33,11 @@ pub fn load_engine_config(
         .listen_addr
         .to_string()
         .split('/')
-        .last()
+        .next_back()
         .and_then(|s| s.parse::<u16>().ok())
         .unwrap_or(26656);
 
-    let socket_addr = format!("127.0.0.1:{}", consensus_port).parse()?;
+    let socket_addr = format!("127.0.0.1:{consensus_port}").parse()?;
 
     // Build the engine config using the loaded configuration
     let mut engine_config = EngineConfig::new(chain_id, config.moniker.clone(), socket_addr);
@@ -122,8 +122,8 @@ listen_addr = "0.0.0.0:9000"
 
         // Verify the config was properly loaded
         assert_eq!(engine_config.node.moniker, "test-node");
-        assert_eq!(engine_config.node.consensus.p2p.discovery.enabled, true);
+        assert!(engine_config.node.consensus.p2p.discovery.enabled);
         assert_eq!(engine_config.node.consensus.p2p.persistent_peers.len(), 2);
-        assert_eq!(engine_config.node.metrics.enabled, true);
+        assert!(engine_config.node.metrics.enabled);
     }
 }
