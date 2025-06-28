@@ -31,9 +31,9 @@ error() {
 # Function to check block height of a node
 check_block_height() {
     local port=$1
-    local response=$(curl -s -X POST http://localhost:$port \
+    local response=$(curl -v -s -X POST http://127.0.0.1:$port \
         -H "Content-Type: application/json" \
-        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' 2>/dev/null || echo "")
+        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' 2>&1)
     
     if [ -n "$response" ] && echo "$response" | grep -q "result"; then
         local block_hex=$(echo "$response" | grep -o '"result":"0x[0-9a-fA-F]*"' | cut -d'"' -f4)
