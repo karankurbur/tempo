@@ -11981,7 +11981,11 @@ version = "0.1.0"
 dependencies = [
  "alloy-evm",
  "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "reth-ethereum-primitives",
+ "reth-evm",
  "reth-evm-ethereum",
+ "reth-primitives-traits",
  "tempo-chainspec",
  "tempo-precompiles",
  "tempo-revm",
