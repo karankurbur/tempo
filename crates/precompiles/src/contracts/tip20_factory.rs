@@ -3,6 +3,7 @@ use crate::{
     contracts::{
         storage::StorageProvider,
         tip20::TIP20Token,
+        token_id_to_address,
         types::{ITIP20Factory, TIP20Error, TIP20FactoryEvent},
     },
 };
@@ -70,6 +71,7 @@ impl<'a, S: StorageProvider> TIP20Factory<'a, S> {
             .emit_event(
                 TIP20_FACTORY_ADDRESS,
                 TIP20FactoryEvent::TokenCreated(ITIP20Factory::TokenCreated {
+                    token: token_id_to_address(token_id.to::<u64>()),
                     tokenId: token_id,
                     name: call.name,
                     symbol: call.symbol,
@@ -87,5 +89,63 @@ impl<'a, S: StorageProvider> TIP20Factory<'a, S> {
         self.storage
             .sload(TIP20_FACTORY_ADDRESS, slots::TOKEN_ID_COUNTER)
             .expect("TODO: handle error")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::contracts::{storage::hashmap::HashMapStorageProvider, types::TIP20FactoryEvent};
+
+    #[test]
+    fn test_create_token() {
+        let mut storage = HashMapStorageProvider::new(1);
+        let mut factory = TIP20Factory::new(&mut storage);
+
+        factory
+            .initialize()
+            .expect("Factory initialization should succeed");
+
+        let sender = Address::random();
+        let call = ITIP20Factory::createTokenCall {
+            name: "Test Token".to_string(),
+            symbol: "TEST".to_string(),
+            currency: "USD".to_string(),
+            admin: sender,
+        };
+
+        let token_id_0 = factory
+            .create_token(&sender, call.clone())
+            .expect("Token creation should succeed");
+
+        let token_id_1 = factory
+            .create_token(&sender, call)
+            .expect("Token creation should succeed");
+
+        let factory_events = storage.events.get(&TIP20_FACTORY_ADDRESS).unwrap();
+        assert_eq!(factory_events.len(), 2);
+
+        let token_addr_0 = token_id_to_address(token_id_0.to::<u64>());
+        let expected_event_0 = TIP20FactoryEvent::TokenCreated(ITIP20Factory::TokenCreated {
+            token: token_addr_0,
+            tokenId: token_id_0,
+            name: "Test Token".to_string(),
+            symbol: "TEST".to_string(),
+            currency: "USD".to_string(),
+            admin: sender,
+        });
+        assert_eq!(factory_events[0], expected_event_0.into_log_data());
+
+        let token_addr_1 = token_id_to_address(token_id_1.to::<u64>());
+        let expected_event_1 = TIP20FactoryEvent::TokenCreated(ITIP20Factory::TokenCreated {
+            token: token_addr_1,
+            tokenId: token_id_1,
+            name: "Test Token".to_string(),
+            symbol: "TEST".to_string(),
+            currency: "USD".to_string(),
+            admin: sender,
+        });
+
+        assert_eq!(factory_events[1], expected_event_1.into_log_data());
     }
 }
