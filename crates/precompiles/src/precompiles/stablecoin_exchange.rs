@@ -7,7 +7,7 @@ use crate::{
         stablecoin_exchange::StablecoinExchange, storage::StorageProvider,
         types::IStablecoinExchange,
     },
-    precompiles::{Precompile, mutate, mutate_void, view},
+    precompiles::{Precompile, mutate, mutate_void, view, view_result},
 };
 use alloy::{primitives::Address, sol_types::SolCall};
 use revm::precompile::{PrecompileError, PrecompileResult};
@@ -52,6 +52,21 @@ impl<'a, S: StorageProvider> Precompile for StablecoinExchange<'a, S> {
                     self.balance_of(call.user, call.token)
                 })
             }
+
+            IStablecoinExchange::getOrderCall::SELECTOR => view_result::<
+                IStablecoinExchange::getOrderCall,
+                IStablecoinExchange::IStablecoinExchangeErrors,
+            >(calldata, |call| {
+                self.get_order(call.orderId).map(|order| order.into())
+            }),
+
+            IStablecoinExchange::getPriceLevelCall::SELECTOR => {
+                view::<IStablecoinExchange::getPriceLevelCall>(calldata, |call| {
+                    self.get_price_level(call.base, call.tick, call.isBid)
+                        .into()
+                })
+            }
+
             IStablecoinExchange::pairKeyCall::SELECTOR => {
                 view::<IStablecoinExchange::pairKeyCall>(calldata, |call| {
                     self.pair_key(call.tokenA, call.tokenB)
@@ -109,22 +124,18 @@ impl<'a, S: StorageProvider> Precompile for StablecoinExchange<'a, S> {
                     },
                 )
             }
-            IStablecoinExchange::quoteSellCall::SELECTOR => {
-                mutate::<
-                    IStablecoinExchange::quoteSellCall,
-                    IStablecoinExchange::IStablecoinExchangeErrors,
-                >(calldata, msg_sender, |_, call| {
-                    self.quote_sell(call.tokenIn, call.tokenOut, call.amountIn)
-                })
-            }
-            IStablecoinExchange::quoteBuyCall::SELECTOR => {
-                mutate::<
-                    IStablecoinExchange::quoteBuyCall,
-                    IStablecoinExchange::IStablecoinExchangeErrors,
-                >(calldata, msg_sender, |_, call| {
-                    self.quote_buy(call.tokenIn, call.tokenOut, call.amountOut)
-                })
-            }
+            IStablecoinExchange::quoteSellCall::SELECTOR => view_result::<
+                IStablecoinExchange::quoteSellCall,
+                IStablecoinExchange::IStablecoinExchangeErrors,
+            >(calldata, |call| {
+                self.quote_sell(call.tokenIn, call.tokenOut, call.amountIn)
+            }),
+            IStablecoinExchange::quoteBuyCall::SELECTOR => view_result::<
+                IStablecoinExchange::quoteBuyCall,
+                IStablecoinExchange::IStablecoinExchangeErrors,
+            >(calldata, |call| {
+                self.quote_buy(call.tokenIn, call.tokenOut, call.amountOut)
+            }),
             IStablecoinExchange::executeBlockCall::SELECTOR => {
                 mutate_void::<
                     IStablecoinExchange::executeBlockCall,

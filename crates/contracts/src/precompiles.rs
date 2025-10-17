@@ -314,14 +314,47 @@ sol! {
     #[derive(Debug, PartialEq, Eq)]
     #[sol(rpc)]
     interface IStablecoinExchange {
+        struct Order {
+            /// Address of order maker
+            address maker;
+            /// Orderbook key
+            bytes32 bookKey;
+            /// Bid or ask indicator
+            bool isBid;
+            /// Price tick
+            int16 tick;
+            /// Original order amount
+            uint128 amount;
+            /// Remaining amount to fill
+            uint128 remaining;
+            /// Previous order ID in FIFO queue
+            uint128 prev;
+            /// Next order ID in FIFO queue
+            uint128 next;
+            /// Boolean indicating if order is flipOrder
+            bool isFlip;
+            /// Flip order tick to place new order at once current order fills
+            int16 flipTick;
+        }
+
+        struct PriceLevel {
+            /// Order ID of the first order at this tick (0 if empty)
+            uint128 head;
+            /// Order ID of the last order at this tick (0 if empty)
+            uint128 tail;
+            /// Total liquidity available at this tick level
+            uint128 totalLiquidity;
+        }
+
         // View functions
         function balanceOf(address user, address token) external view returns (uint128);
         function quoteBuy(address tokenIn, address tokenOut, uint128 amountOut) external view returns (uint128 amountIn);
         function quoteSell(address tokenIn, address tokenOut, uint128 amountIn) external view returns (uint128 amountOut);
         function pairKey(address tokenA, address tokenB) external pure returns (bytes32 key);
-        function getTickLevel(address base, int16 tick, bool isBid) external view returns (uint128 head, uint128 tail, uint128 totalLiquidity);
+        function getPriceLevel(address base, int16 tick, bool isBid) external view returns (PriceLevel memory level);
         function activeOrderId() external view returns (uint128);
         function pendingOrderId() external view returns (uint128);
+        function getOrder(uint128 orderId) external view returns (Order memory);
 
         // Pair management
         function createPair(address base) external returns (bytes32 key);
