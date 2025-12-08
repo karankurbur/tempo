@@ -395,7 +395,10 @@ export default defineConfig({
                         {
                           text: 'Stablecoin Exchange',
                           items: [
-                            { text: 'buy', link: '/sdk/typescript/viem/dex.buy' },
+                            {
+                              text: 'buy',
+                              link: '/sdk/typescript/viem/dex.buy',
+                            },
                             {
                               text: 'cancel',
                               link: '/sdk/typescript/viem/dex.cancel',
@@ -1319,8 +1322,8 @@ export default defineConfig({
                     },
                   ],
                 },
-              ]
-            }
+              ],
+            },
           ],
         },
         {
@@ -1604,21 +1607,14 @@ export default defineConfig({
               link: '/learn/tempo-overview',
             },
           ],
-        }
+        },
       ],
     }
 
-    const [
-      overview,
-      quickstart,
-      startBuilding,
-      runNode,
-      sdksWithReference
-    ] = rawSidebar['/'] as SidebarItem[]
+    const [overview, quickstart, startBuilding, runNode, sdksWithReference] =
+      rawSidebar['/'] as SidebarItem[]
 
-    const [
-      tempoProtocol
-    ] = rawSidebar['/documentation'] as SidebarItem[]
+    const [tempoProtocol] = rawSidebar['/documentation'] as SidebarItem[]
 
     const combinedSidebar = [
       // Home
@@ -1640,12 +1636,18 @@ export default defineConfig({
       '/documentation': combinedSidebar,
       '/sdk/typescript': combinedSidebar,
       '/learn': rawSidebar['/learn'],
-      } as {[key: string]: SidebarItem[]}
-
+    } as { [key: string]: SidebarItem[] }
   })(),
   topNav: [
     { text: 'Learn', link: '/learn' },
-    { text: 'Docs', link: '/' },
+    {
+      text: 'Docs',
+      link: '/',
+      match(path) {
+        if (path.startsWith('/learn')) return false
+        return true
+      },
+    },
     { text: 'Ecosystem', link: 'https://tempo.xyz/ecosystem' },
     { text: 'Blog', link: 'https://tempo.xyz/blog' },
   ],
