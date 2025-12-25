@@ -9,7 +9,11 @@ import { ConnectWallet } from '../../../components/ConnectWallet.tsx'
 # Connect to Wallets
 
 It is possible to use Tempo with EVM-compatible wallets that support the Tempo network, 
-or support adding custom networks (like MetaMask).
+or support adding custom networks (like MetaMask). 
+
+:::warning
+Sending Tempo transactions is not currently supported on Metamask. Use an [Embed Passkey Account](/guide/use-accounts/embed-passkeys) to send Tempo transactions. 
+:::
 
 You can use these wallets when building your application on Tempo.
 
@@ -37,7 +41,8 @@ Next, let's ensure Wagmi is configured correctly to connect to wallets.
 
 Ensure we have [`multiInjectedProviderDiscovery`](https://wagmi.sh/react/api/createConfig#multiinjectedproviderdiscovery) set to `true` to display injected browser wallets.
 
-We can also utilize [wallet connectors](https://wagmi.sh/react/api/connectors) from Wagmi like `metaMask` to support mobile devices.
+We can also utilize [wallet connectors](https://wagmi.sh/react/api/connectors) from Wagmi like `metaMask` to support injected wallets.
+Install the connector `pnpm i @metamask/sdk`
 
 ```tsx twoslash [config.ts]
 // @noErrors
